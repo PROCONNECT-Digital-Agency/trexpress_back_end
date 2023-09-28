@@ -144,6 +144,9 @@ Route::group(['prefix' => 'v1', 'middleware' => ['localization']], function (){
         Route::put('{type}/{id}/transactions', [Payment\TransactionController::class, 'updateStatus']);
     });
 
+    Route::post('payments/atmos-token', [AtmosController::class, 'token']);
+    Route::post('payments/card', [AtmosController::class, 'card']);
+
     Route::group(['prefix' => 'dashboard'], function () {
         /* Galleries */
         Route::get('/galleries/paginate', [GalleryController::class, 'paginate']);

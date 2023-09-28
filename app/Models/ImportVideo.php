@@ -13,7 +13,7 @@ class ImportVideo extends Model
 
     protected $table = 'videos';
 
-    public $fillable = ['user_id', 'admin_id', 'name', 'banner', 'description'];
+    public $fillable = ['user_id', 'name', 'banner', 'description'];
 
     const TYPES = [
         'blog' => 1,
@@ -30,10 +30,10 @@ class ImportVideo extends Model
     }
 
     public function translations() {
-        return $this->hasMany(VideoTranslation::class);
+        return $this->hasMany(video_translations::class);
     }
 
     public function translation() {
-        return $this->hasOne(VideoTranslation::class);
+        return $this->hasOne(video_translations::class);
     }
 }

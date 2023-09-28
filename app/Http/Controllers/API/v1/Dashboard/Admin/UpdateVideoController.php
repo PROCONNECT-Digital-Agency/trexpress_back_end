@@ -6,22 +6,49 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ImportVideo;
 use App\Http\Requests\UpdateImportVideoRequest;
+use App\Http\Resources\ImportResource;
+use App\Repositories\VideoRepository\VideoRepository;
+use App\Services\VideoService\VideoService;
 
-class UpdateVideoController extends Controller
+class UpdateVideoController extends AdminBaseController
 {
-    public function allVideo()
+
+
+    private VideoRepository $VideoRepository;
+    private VideoService $videoService;
+
+    /**
+     * @param BlogRepository $VideoRepository
+     * @param videoService $videoService
+     */
+    public function __construct(VideoRepository $VideoRepository, VideoService $videoService)
     {
-      return ImportVideo::all();
+        parent::__construct();
+        $this->VideoRepository = $VideoRepository;
+        $this->videoService = $videoService;
+    }
+
+
+    public function allVideo(Request $request)
+    {
+
+      $importVideo = $this->VideoRepository->videosPaginate($request->perPage ?? 15, null, $request->all());
+        return ImportResource::collection($importVideo);
     }
     
-    public function updateVideo(UpdateImportVideoRequest $request, ImportVideo $importVideo)
+    public function updateVideo(string $uuid, Request $request)
     {
         
-        $request->validate();
-        $importVideo['status'] = $request->status;
-        
-        return $importVideo->update();
-        
+        $result = $this->videoService->update($uuid, $request);
+        return $result;
+        if ($result['status']) {
+
+            return $this->successResponse(__('web.record_successfully_updated'), ImportResource::make($result['data']));
+        }
+        return $this->errorResponse(
+            $result['code'], $result['message'] ?? trans('errors.' . $result['code'], [], \request()->lang),
+            Response::HTTP_BAD_REQUEST
+        );
         /*if ($request->file('name')) 
          {
             if(file_exists('app/public/images/videos/'.$importVideo->name))
@@ -38,5 +65,16 @@ class UpdateVideoController extends Controller
         $requestData = $request->all();
         $requestData['status'] = 1;*/
 
+    }
+
+    public function delete_video($id)
+    {
+        $importVideo = ImportVideo::findOrFail($id);
+        if ($importVideo) {
+            $importVideo->delete();
+            return "data deleted Successfully";
+        }else {
+            return "404 not found";
+        }
     }
 }

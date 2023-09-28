@@ -32,7 +32,6 @@ class UpdateImportVideoRequest extends FormRequest
     {
         return [
             'status' => 'required',
-            'description' => 'required',
         ];
     }
 

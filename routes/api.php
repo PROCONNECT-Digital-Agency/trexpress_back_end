@@ -361,6 +361,10 @@ Route::group(['prefix' => 'v1', 'middleware' => ['localization']], function (){
         // ADMIN BLOCK
         Route::group(['prefix' => 'admin', 'middleware' => ['sanctum.check', 'role:admin|manager'], 'as' => 'admin.'], function () {
             /* Dashboard */
+            Route::get('allVideo', [Admin\UpdateVideoController::class, 'allVideo']);
+            Route::put('video/{video}', [Admin\UpdateVideoController::class, 'updateVideo']);
+            Route::post('video/delete/{id}', [Admin\UpdateVideoController::class, 'delete_video']);
+
             Route::get('statistics/count', [Admin\DashboardController::class, 'countStatistics']);
             Route::get('statistics/sum', [Admin\DashboardController::class, 'sumStatistics']);
             Route::get('statistics/customer/top', [Admin\DashboardController::class, 'topCustomersStatistics']);
